@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 public class LibrarySystem {
 
@@ -15,9 +16,23 @@ public class LibrarySystem {
     private String systemName = "Legacy University Library";
     private boolean running = true;
     private int menuCounter = 0;
+    private final Map<String, Runnable> commands = new HashMap<>();
 
     public LibrarySystem() {
         LegacyDatabase.seedInitialData();
+        setupDispatcher();
+    }
+
+    private void setupDispatcher() {
+        commands.put("1", this::handleRegisterBook);
+        commands.put("2", this::handleRegisterUser);
+        commands.put("3", this::handleBorrowBook);
+        commands.put("4", this::handleReturnBook);
+        commands.put("5", this::handleListBooks);
+        commands.put("6", this::handleGenerateReport);
+        commands.put("7", this::handleListUsers);
+        commands.put("8", this::handleListLoans);
+        commands.put("9", this::handleDebugArea);
     }
 
     public void startCli() {
@@ -26,39 +41,22 @@ public class LibrarySystem {
             try {
                 showMenu();
                 String option = DataUtil.readLine("Select option: ");
-                menuCounter++;
-
-                if ("1".equals(option)) {
-                    handleRegisterBook();
-                } else if ("2".equals(option)) {
-                    handleRegisterUser();
-                } else if ("3".equals(option)) {
-                    handleBorrowBook();
-                } else if ("4".equals(option)) {
-                    handleReturnBook();
-                } else if ("5".equals(option)) {
-                    handleListBooks();
-                } else if ("6".equals(option)) {
-                    handleGenerateReport();
-                } else if ("7".equals(option)) {
-                    handleListUsers();
-                } else if ("8".equals(option)) {
-                    handleListLoans();
-                } else if ("9".equals(option)) {
-                    handleDebugArea();
-                } else if ("0".equals(option)) {
+                
+                if ("0".equals(option)) {
                     running = false;
                     System.out.println("bye");
+                } else if (commands.containsKey(option)) {
+                    commands.get(option).run();
+                    menuCounter++;
+                    if (menuCounter % 3 == 0) {
+                        LegacyDatabase.clearLogsIfTooBig();
+                    }
                 } else {
-                    System.out.println("invalid option");
-                }
-
-                if (menuCounter % 3 == 0) {
-                    LegacyDatabase.clearLogsIfTooBig();
+                    System.out.println("Invalid option");
                 }
             } catch (Exception e) {
-                System.out.println("General system error: " + e.getMessage());
-                LegacyDatabase.addLog("system-main-loop-error-" + e.getMessage());
+            System.out.println("General system error: " + e.getMessage());
+            LegacyDatabase.addLog("system-main-loop-error-" + e.getMessage());
             }
         }
     }
