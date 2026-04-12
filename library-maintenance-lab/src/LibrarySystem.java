@@ -273,6 +273,40 @@ public class LibrarySystem {
         // TODO: remove this debug area in future refactor
     }
 
+    public void handleUserLoanHistory() {
+        try {
+            int userId = DataUtil.askInt("Enter User ID: ", -1);
+
+            Map<String, Object> user = LegacyDatabase.getUserById(userId);
+
+            if (user == null) {
+                System.out.println("User not found");
+                return;
+            }
+
+            String userName = String.valueOf(user.get("name"));
+            DataUtil.printHeader("Loan history for user " + userName + " with id " + userId);
+
+            List<Map<String, Object>> history = loanManager.getLoansByUser(userId);
+
+            if (history.isEmpty()) {
+                System.out.println("No loans found for user " + userName + " with id " + userId);
+            } else {
+                System.out.println("ID | BOOK ID | STATUS | FINE");
+                for (Map<String, Object> loan : history) {
+                    System.out.println(
+                    loan.get("id") + " | " + 
+                    loan.get("bookId") + " | " + 
+                    loan.get("status") + " | " + 
+                    loan.get("fine")
+                    );
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error handling user loan history: " + e.getMessage());
+        }
+    }
+
     public void runDemoScenario() {
         try {
             // LEGACY CODE:
