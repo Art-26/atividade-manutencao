@@ -222,4 +222,18 @@ public class LoanManager {
         returnBook(loanId, returnedDate, channel, forceFlag, "cli", "handler");
         System.out.println("Return processed");
     }
+
+    public List<Map<String, Object>> getLoansByUser(int userId) {
+        List<Map<String, Object>> 
+        allLoans = LegacyDatabase.getLoans();
+        List<Map<String, Object>> userHistory = new java.util.ArrayList<>();
+
+        for (Map<String, Object> loan : allLoans) {
+            if (loan.get("userId") != null && (int) loan.get("userId") == userId) {
+                userHistory.add(loan);
+            }
+        }
+
+        return userHistory;
+    }
 }
