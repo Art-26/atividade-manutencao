@@ -24,3 +24,14 @@
 9. 
 
 10. 
+
+---
+# ATIVIDADE 2
+1. Bug 1
+2. Bug 2
+3. Bug 3
+4. Implementado a funcionalidade de exibir histórico de empréstimos por um usuário específico
+
+
+### impactos e riscos conhecidos
+- Um dos riscos desse sistema, é que sem a refatoração e sem o concerto necessário para os bugs, podemos ter um impacto direto na performance do sistema como um todo, no caso, no momento estamos lidando com cerca de uns 5 usuários, uns 3 livros e tudo mais, mas e como será o impacto no sistema se tivermos 100.000 usuários? 500.000 livros? Ainda mais que temos o LegacyDatabase, que não é um banco de dados bem simples e temporário, logo, todos esses pontos influenciam em como será a vida útil do sistema como um todo. 
