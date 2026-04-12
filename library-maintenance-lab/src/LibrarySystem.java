@@ -33,6 +33,7 @@ public class LibrarySystem {
         commands.put("7", this::handleListUsers);
         commands.put("8", this::handleListLoans);
         commands.put("9", this::handleDebugArea);
+        commands.put("10", this::handleUserLoanHistory);
     }
 
     public void startCli() {
@@ -72,6 +73,7 @@ public class LibrarySystem {
         System.out.println("7 - List users");
         System.out.println("8 - List loans");
         System.out.println("9 - Debug area");
+        System.out.println("10 - User loan history");
         System.out.println("0 - Exit");
         DataUtil.printSeparator();
     }
