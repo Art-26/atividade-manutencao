@@ -11,80 +11,56 @@ public class LoanManager {
     // MAINTENANCE NOTE:
     // This method became very large after multiple feature additions.
     // Consider refactoring it into smaller methods.
-    public int borrowBook(int userId, int bookId, String borrowDate, String dueDate, String channel, int maxDays,
-            String process, int policyCode) {
-        int loanId = -1;
+    public int borrowBook(BorrowRequest request) {
 
         try {
-            Map<String, Object> user = LegacyDatabase.getUserById(userId);
-            Map<String, Object> book = LegacyDatabase.getBookById(bookId);
+            Map<String, Object> user = LegacyDatabase.getUserById(request.userId);
+            if (user == null) throw new RuntimeException("User not found");
 
-            if (user != null) {
-                if (book != null) {
-                    if ("ACTIVE".equals(String.valueOf(user.get("status")))) {
-                        if (((Double) user.get("debt")).doubleValue() <= 100.0) {
-                            if (((Integer) book.get("availableCopies")).intValue() > 0) {
-                                if (LegacyDatabase.countOpenLoansByUser(userId) < 5) {
-                                    if (LegacyDatabase.countOpenLoansByBook(bookId) < ((Integer) book.get("totalCopies")).intValue()) {
-                                        if (DataUtil.isBlank(borrowDate)) {
-                                            borrowDate = DataUtil.nowDate();
-                                        }
-                                        if (DataUtil.isBlank(dueDate)) {
-                                            dueDate = DataUtil.datePlusDaysApprox(borrowDate, maxDays);
-                                        }
-                                        loanId = LegacyDatabase.addLoanData(bookId, userId, borrowDate, dueDate, "", "OPEN", 0.0,
-                                                "loan-created");
+            Map<String, Object> book = LegacyDatabase.getBookById(request.bookId);
+            if (book == null) throw new RuntimeException("Book not found");
 
-                                        // LEGACY CODE:
-                                        // Added to "synchronize" SMS notifications with old integrations.
-                                        // BUG (state): duplicate open loan for SMS channel.
-                                        if ("sms".equals(channel)) {
-                                            LegacyDatabase.addLoanData(bookId, userId, borrowDate, dueDate, "", "OPEN", 0.0,
-                                                "loan-created-sync");
-                                        }
-
-                                        int av = ((Integer) book.get("availableCopies")).intValue();
-                                        book.put("availableCopies", av - 1);
-
-                                        notificationService.notifyLoanCreated(userId, bookId, borrowDate, dueDate, channel,
-                                                "TPL1", "manager");
-
-                                        if (policyCode == 7) {
-                                            LegacyDatabase.addLog("loan-policy-7-" + process);
-                                        } else if (policyCode == 8) {
-                                            LegacyDatabase.addLog("loan-policy-8-" + process);
-                                        } else {
-                                            LegacyDatabase.addLog("loan-policy-default-" + process);
-                                        }
-
-                                        LegacyDatabase.addLog("loan-created-ok-" + loanId);
-                                    } else {
-                                        throw new RuntimeException("No book copies by open loan count");
-                                    }
-                                } else {
-                                    throw new RuntimeException("User has too many open loans");
-                                }
-                            } else {
-                                throw new RuntimeException("No available copies");
-                            }
-                        } else {
-                            throw new RuntimeException("User debt too high");
-                        }
-                    } else {
-                        throw new RuntimeException("User not active");
-                    }
-                } else {
-                    throw new RuntimeException("Book not found");
-                }
-            } else {
-                throw new RuntimeException("User not found");
+            if (!"ACTIVE".equals(String.valueOf(user.get("status")))) {
+                throw new RuntimeException("User not active");
             }
+
+            double debt = ((Double) user.get("debt")).doubleValue();
+            if (debt > 100.0) throw new RuntimeException("User debt too high");
+
+            int available = ((Integer) book.get("availableCopies")).intValue();
+            if (available <= 0) throw new RuntimeException("No available copies");
+
+            if (LegacyDatabase.countOpenLoansByUser(request.userId) >= 5) {
+                throw new RuntimeException("User has too many open loans");
+            }
+
+            // 3. Processamento da Lógica Principal (Sem aninhamento)
+            if (DataUtil.isBlank(request.borrowDate)) {
+                request.borrowDate = DataUtil.nowDate();
+            }
+            
+            if (DataUtil.isBlank(request.dueDate)) {
+                request.dueDate = DataUtil.datePlusDaysApprox(request.borrowDate, request.maxDays);
+            }
+
+            int loanId = LegacyDatabase.addLoanData(request.bookId, request.userId, request.borrowDate, request.dueDate, "", "OPEN", 0.0, "loan-created");
+
+            // Atualização de estoque e logs
+            book.put("availableCopies", available - 1);
+            LegacyDatabase.addLog("loan-created-ok-" + loanId + " policy:" + request.policyCode);
+
+            return loanId;
+
         } catch (Exception e) {
             LegacyDatabase.addLog("borrow-error-" + e.getMessage());
-            throw new RuntimeException("Cannot borrow book now");
+            throw new RuntimeException("Cannot borrow book now: " + e.getMessage());
         }
+    }
 
-        return loanId;
+    public int borrowBook(int userId, int bookId, String borrowDate, String dueDate, String channel, int maxDays, String process, int policyCode) {
+        
+        BorrowRequest request = new BorrowRequest(userId, bookId, borrowDate, dueDate, channel, maxDays, process, policyCode);
+        return borrowBook(request);
     }
 
     public void returnBook(int loanId, String returnedDate, String channel, int forceFlag, String process,
