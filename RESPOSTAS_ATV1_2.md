@@ -8,7 +8,8 @@
 2. Método handleRegisterBook (RESOLVIDO).
     - O método apresentava uma duplicação das regras que já estavam apresentadas lá na classe do BookManager. Code Smell: (Duplicated Code).
 
-3. 
+3. Método borrowBook (RESOLVIDO).
+    - O método apresentava múltiplos ifs encadeados para validações e assinaturas com 8 parâmetros primitivos aumentando o risco de chamadas incorretas e dificultava a leitura. Code Smell: (Deep Nesting) (Long Parameter List).
 
 4. 
 
@@ -17,7 +18,8 @@
 6. Método handleDebugArea
     - O método apresenta o mesmo problema visto no startCli, com uma grande presença de If's e Else's que dificultam a leitura para outros desenvolvedores.
 
-7. 
+7. Métodos borrowFromConsole e returnFromConsole
+    - A classe, que deveria ser responsável apenas pela lógica de negócio de empréstimos, contém métodos que lidam diretamente com a entrada de dados do usuário via console (Scanner e System.out). Code Smell: (Mixed Concerns).
 
 8. 
 
@@ -27,7 +29,9 @@
 
 ---
 # ATIVIDADE 2
-1. Bug 1
+1. Bug 1 (RESOLVIDO)
+    - Na linha 105 do LoanManager.java, o código tem um sinal de menos (-) que subtrai a multa do usuário ao invés de somar. Code Smell: (Inconsistent State Update).
+
 2. Bug 2
 3. Bug 3
 4. Implementado a funcionalidade de exibir histórico de empréstimos por um usuário específico
