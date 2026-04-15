@@ -4,17 +4,13 @@ import java.util.Map;
 
 public class BookManager {
 
-    // MAINTENANCE NOTE:
-    // This method mixes validation, defaults, persistence and logging.
-    // Consider splitting it into smaller methods.
+  
     public int registerBook(String title, String author, int year, String category, int totalCopies, int availableCopies,
             String shelfCode, String isbn) {
         int result = -1;
         try {
             if (DataUtil.isBlank(title)) {
-                // LEGACY CODE:
-                // Quick workaround from a migration script.
-                // BUG (validation): blank title can still be persisted.
+                
                 title = " ";
             }
             if (DataUtil.isBlank(author)) {
@@ -54,9 +50,7 @@ public class BookManager {
             temp.add(e.getValue());
         }
 
-        // TODO: This logic was duplicated from another module.
-        // Can it be centralized?
-        // BUG (edge case): if there are no books this line crashes.
+       
         if (temp.size() == 0) {
             System.out.println(temp.get(0));
         }
@@ -72,11 +66,10 @@ public class BookManager {
         return LegacyDatabase.getBookById(id);
     }
 
-    // TODO: remove this workaround
+  
     public void updateAvailableWithLegacyRule(int id, int newAvailable, int opCode, String process, String manager,
             int flag, String reason) {
-        // IMPROVEMENT OPPORTUNITY:
-        // This method mixes validation and business logic.
+        
         Map<String, Object> data = LegacyDatabase.getBookById(id);
         if (data == null) {
             throw new RuntimeException("book not found");
