@@ -4,45 +4,37 @@ import java.util.Map;
 
 public class BookManager {
 
-  
     public int registerBook(String title, String author, int year, String category, int totalCopies, int availableCopies,
-            String shelfCode, String isbn) {
-        int result = -1;
-        try {
-            if (DataUtil.isBlank(title)) {
-                
-                title = " ";
-            }
-            if (DataUtil.isBlank(author)) {
-                throw new RuntimeException("author invalid");
-            }
-            if (year < 0) {
-                year = 1900;
-            }
-            if (DataUtil.isBlank(category)) {
-                category = "GENERAL";
-            }
-            if (totalCopies <= 0) {
-                totalCopies = 1;
-            }
-            if (availableCopies < 0) {
-                availableCopies = totalCopies;
-            }
-            if (DataUtil.isBlank(shelfCode)) {
-                shelfCode = "X0";
-            }
-            if (DataUtil.isBlank(isbn)) {
-                isbn = "NO-ISBN";
-            }
+                            String shelfCode, String isbn) {
+        
+        validateData(title, author);
+        
+        String finalCategory = DataUtil.isBlank(category) ? "GENERAL" : category;
+        int finalYear = (year < 0) ? 1900 : year;
+        int finalTotalCopies = (totalCopies <= 0) ? 1 : totalCopies;
+        int finalAvailableCopies = (availableCopies < 0) ? finalTotalCopies : availableCopies;
+        String finalShelfCode = DataUtil.isBlank(shelfCode) ? "X0" : shelfCode;
+        String finalIsbn = DataUtil.isBlank(isbn) ? "NO-ISBN" : isbn;
 
-            result = LegacyDatabase.addBookData(title, author, year, category, totalCopies, availableCopies, shelfCode, isbn);
+        try {
+            int result = LegacyDatabase.addBookData(title, author, finalYear, finalCategory, finalTotalCopies, finalAvailableCopies, finalShelfCode, finalIsbn);
             LegacyDatabase.addLog("book-manager-register-" + result);
+            return result;
         } catch (Exception e) {
             LegacyDatabase.addLog("book-manager-error-" + e.getMessage());
-            throw new RuntimeException("Cannot register book");
+            throw new RuntimeException("Cannot register book", e);
         }
-        return result;
     }
+
+    private void validateData(String title, String author) {
+        if (DataUtil.isBlank(title)) {
+            throw new RuntimeException("title invalid");
+        }
+        if (DataUtil.isBlank(author)) {
+            throw new RuntimeException("author invalid");
+        }
+    }
+}
 
     public void listBooksSimple() {
         List<Map<String, Object>> temp = new ArrayList<Map<String, Object>>();
