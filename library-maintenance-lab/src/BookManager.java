@@ -34,7 +34,6 @@ public class BookManager {
             throw new RuntimeException("author invalid");
         }
     }
-}
 
     public void listBooksSimple() {
         List<Map<String, Object>> temp = new ArrayList<Map<String, Object>>();
