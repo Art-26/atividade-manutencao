@@ -11,18 +11,19 @@
 3. Método borrowBook (RESOLVIDO).
     - O método apresentava múltiplos ifs encadeados para validações e assinaturas com 8 parâmetros primitivos aumentando o risco de chamadas incorretas e dificultava a leitura. Code Smell: (Deep Nesting) (Long Parameter List).
 
-4. O código foi refatorado para separar a validação em um método próprio, melhorar a legibilidade usando variáveis finais e operador ternário, e evitar alterar os parâmetros originais. Também corrigiu um bug onde título vazio era salvo e melhorou o tratamento de erros mantendo a causa da exceção. No geral, ficou mais limpo, seguro e fácil de manter.
-
+4. Método registerBook (RESOLVIDO).
+    - O código foi refatorado para separar a validação em um método próprio, melhorar a legibilidade usando variáveis finais e operador ternário, e evitar alterar os parâmetros originais. Também corrigiu um bug onde título vazio era salvo e melhorou o tratamento de erros mantendo a causa da exceção. No geral, ficou mais limpo, seguro e fácil de manter. Code Smell:(Long Method).
 
 5. 
 
-6. Método handleDebugArea
+6. 
+
+7. Método handleDebugArea
     - O método apresenta o mesmo problema visto no startCli, com uma grande presença de If's e Else's que dificultam a leitura para outros desenvolvedores.
 
-7. Métodos borrowFromConsole e returnFromConsole
+8. Métodos borrowFromConsole e returnFromConsole
     - A classe, que deveria ser responsável apenas pela lógica de negócio de empréstimos, contém métodos que lidam diretamente com a entrada de dados do usuário via console (Scanner e System.out). Code Smell: (Mixed Concerns).
 
-8. 
 
 9. 
 
@@ -33,10 +34,11 @@
 1. Bug 1 (RESOLVIDO)
     - Na linha 105 do LoanManager.java, o código tem um sinal de menos (-) que subtrai a multa do usuário ao invés de somar. Code Smell: (Inconsistent State Update).
 
-2. Bug 2 - Após a realização dos testes, constatou-se que a versão anterior do código permitia a continuidade das operações mesmo na ausência de preenchimento de campos obrigatórios, como o título, realizando o salvamento de forma indevida. Com a devida refatoração e correção do bug, o sistema passou a validar corretamente esses dados, retornando erro quando o título não é informado, garantindo maior integridade e consistência das informações.
+2. Bug 2 no método registerBook (title blank).
+    - Após a realização dos testes, constatou-se que a versão anterior do código permitia a continuidade das operações mesmo na ausência de preenchimento de campos obrigatórios, como o título, realizando o salvamento de forma indevida. Com a devida refatoração e correção do bug, o sistema passou a validar corretamente esses dados, retornando erro quando o título não é informado, garantindo maior integridade e consistência das informações.
 
-3. Bug 3
-4. Implementado a funcionalidade de exibir histórico de empréstimos por um usuário específico
+4. Bug 3
+5. Implementado a funcionalidade de exibir histórico de empréstimos por um usuário específico
 
 
 ### impactos e riscos conhecidos
