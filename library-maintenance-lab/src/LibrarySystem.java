@@ -203,7 +203,6 @@ public class LibrarySystem {
         }
     }
 
-    // Long method with deep nesting and mixed concerns
     public void handleDebugArea() {
         DataUtil.printHeader("Debug Area (Legacy)");
         System.out.println("1-Print logs");
