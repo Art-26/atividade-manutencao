@@ -2,6 +2,8 @@
 
 Este é o repositório utilizado na disciplina de **Manutenção de Software** do curso de **Engenharia de Software da Unicesumar Ponta Grossa**.
 
+## *Para consultar as respostas da atividade 1 e 2, consulte o arquivo [RESPOSTAS_ATV1_2.md](https://github.com/Art-26/atividade-manutencao/blob/master/RESPOSTAS_ATV1_2.md)
+
 ## Mapa Mental da Disciplina
 
 - [Mapa mental (XMind)](https://app.xmind.com/share/OBzglW7X)
