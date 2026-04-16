@@ -111,7 +111,8 @@ public class LibrarySystem {
             String document = DataUtil.ask("Document: ", "NO-DOC");
             String status = DataUtil.ask("Status: ", "ACTIVE");
 
-            int id = userManager.registerUser(name, email, phone, type, city, document, status);
+            UserManager.UserDTO dto = new UserManager.UserDTO(name, email, phone, type, city, document, status);
+            int id = userManager.registerUser(dto);
             System.out.println("User registered with id " + id);
         } catch (Exception e) {
             System.out.println("Error register user: " + e.getMessage());
@@ -312,8 +313,10 @@ public class LibrarySystem {
             // LEGACY CODE:
             // This startup scenario was added quickly to simplify manual testing.
             int idBook = bookManager.registerBook("Legacy Java", "Unknown", 2010, "CS", 2, 2, "B1", "ISBN-999");
-            int idUser = userManager.registerUser("Carlos", "carlos@mail.com", "3333-3333", "student", "Maringa",
-                    "DOC-3", "ACTIVE");
+            UserManager.UserDTO demoUser = new UserManager.UserDTO(
+            "Carlos", "carlos@mail.com", "3333-3333", "student", "Maringa", "DOC-3", "ACTIVE"
+            );
+            int idUser = userManager.registerUser(demoUser);
             int loanId = loanManager.borrowBook(idUser, idBook, DataUtil.nowDate(), DataUtil.datePlusDaysApprox(DataUtil.nowDate(), 14),
                     "email", 14, "demo", 0);
             loanManager.returnBook(loanId, DataUtil.nowDate(), "email", 0, "demo", "handler");
