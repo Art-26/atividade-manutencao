@@ -10,6 +10,7 @@ use App\Http\Requests\AgendamentoEditRequest;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
 use PDF;
+use App\Services\GoogleCalendarService;
 
 class AgendamentoController extends Controller
 {
@@ -76,6 +77,13 @@ class AgendamentoController extends Controller
             return redirect()->back()->with("warning_toastr", $msg);
         }
 
+        try {
+            $googleCalendarService = new \App\Services\GoogleCalendarService();
+            $googleCalendarService->sync($agendamento);
+        } catch (\Exception $e) {
+            \Log::warning("Agendamento salvo localmente, mas falha ao sincronizar com o Google Calendar: " . $e->getMessage());
+        }
+        
         $orcamento = \App\Orcamento::findOrFail($data['orcamento']);
 
         $orcamento->orcamento_status()->associate('3');
