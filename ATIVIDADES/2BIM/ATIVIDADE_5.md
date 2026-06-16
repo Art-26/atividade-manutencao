@@ -131,7 +131,7 @@ A entrega deve incluir evidências da implementação da funcionalidade, como:
 - print do teste unitário criado ou atualizado
 - print da integração chamando o serviço após o `save()` do agendamento
 - print da execução dos testes com sucesso
-- link do commit realizado no padrão Conventional Commits
+- link do commit realizado no padrão Conventional Commits: [https://github.com/Art-26/atividade-manutencao/issues/39]
 
 ### Commit
 
